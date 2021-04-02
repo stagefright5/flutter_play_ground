@@ -26,20 +26,56 @@ class RandomWords extends StatefulWidget {
 
 class _RandomWordsState extends State<RandomWords> {
   final _suggestions = <Suggestion>[];
+  final _saved = <WordPair>{};
   final _biggerFont = TextStyle(fontSize: 18.0);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Select The Names',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-        ),
+        title: getAppBarTitleWidget('Select The Names'),
         backgroundColor: Colors.white,
         centerTitle: true,
+        actions: [
+          IconButton(
+              icon: Icon(Icons.list, color: Colors.black),
+              onPressed: _pushSaved),
+        ],
       ),
       body: _buildSuggestions(),
+    );
+  }
+
+  void _pushSaved() {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        // NEW lines from here...
+        builder: (BuildContext context) {
+          final tiles = _saved.map(
+            (WordPair pair) {
+              return ListTile(
+                title: Text(
+                  pair.asPascalCase,
+                  style: _biggerFont,
+                ),
+              );
+            },
+          );
+          final divided = ListTile.divideTiles(
+            context: context,
+            tiles: tiles,
+          ).toList();
+
+          return Scaffold(
+            appBar: AppBar(
+              backgroundColor: Colors.white,
+              title: getAppBarTitleWidget('Saved Names'),
+              leading: IconButton(icon: Icon(Icons.arrow_left_sharp, color: Colors.black), onPressed: () => Navigator.pop(context)),
+            ),
+            body: ListView(children: divided),
+          );
+        },
+      ),
     );
   }
 
@@ -60,6 +96,11 @@ class _RandomWordsState extends State<RandomWords> {
   void _togglSuggestionSelection(Suggestion s) {
     setState(() {
       s.toggleSelected();
+      if (s.selected) {
+        _saved.add(s.wp);
+      } else {
+        _saved.remove(s.wp);
+      }
     });
   }
 
@@ -85,4 +126,11 @@ class Suggestion {
   toggleSelected() {
     this.selected = !this.selected;
   }
+}
+
+Text getAppBarTitleWidget(String text) {
+  return Text(
+    text,
+    style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+  );
 }
