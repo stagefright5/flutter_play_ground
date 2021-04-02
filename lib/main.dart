@@ -10,6 +10,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Welcome to Flutter',
+      theme: ThemeData(          // Add the 3 lines from here... 
+        primaryColor: Colors.white,
+      ),
       home: Scaffold(
         body: Center(
           child: RandomWords(),
@@ -34,11 +37,10 @@ class _RandomWordsState extends State<RandomWords> {
     return Scaffold(
       appBar: AppBar(
         title: getAppBarTitleWidget('Select The Names'),
-        backgroundColor: Colors.white,
         centerTitle: true,
         actions: [
           IconButton(
-              icon: Icon(Icons.list, color: Colors.black),
+              icon: Icon(Icons.list),
               onPressed: _pushSaved),
         ],
       ),
@@ -68,9 +70,8 @@ class _RandomWordsState extends State<RandomWords> {
 
           return Scaffold(
             appBar: AppBar(
-              backgroundColor: Colors.white,
               title: getAppBarTitleWidget('Saved Names'),
-              leading: IconButton(icon: Icon(Icons.arrow_left_sharp, color: Colors.black), onPressed: () => Navigator.pop(context)),
+              leading: IconButton(icon: Icon(Icons.arrow_left_sharp, ), onPressed: () => Navigator.pop(context)),
             ),
             body: ListView(children: divided),
           );
@@ -131,6 +132,6 @@ class Suggestion {
 Text getAppBarTitleWidget(String text) {
   return Text(
     text,
-    style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+    style: TextStyle(fontWeight: FontWeight.bold),
   );
 }
