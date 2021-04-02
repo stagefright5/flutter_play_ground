@@ -10,7 +10,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Welcome to Flutter',
-      theme: ThemeData(          // Add the 3 lines from here... 
+      theme: ThemeData(
         primaryColor: Colors.white,
       ),
       home: Scaffold(
@@ -39,9 +39,7 @@ class _RandomWordsState extends State<RandomWords> {
         title: getAppBarTitleWidget('Select The Names'),
         centerTitle: true,
         actions: [
-          IconButton(
-              icon: Icon(Icons.list),
-              onPressed: _pushSaved),
+          IconButton(icon: Icon(Icons.list), onPressed: _pushSaved),
         ],
       ),
       body: _buildSuggestions(),
@@ -71,7 +69,11 @@ class _RandomWordsState extends State<RandomWords> {
           return Scaffold(
             appBar: AppBar(
               title: getAppBarTitleWidget('Saved Names'),
-              leading: IconButton(icon: Icon(Icons.arrow_left_sharp, ), onPressed: () => Navigator.pop(context)),
+              leading: IconButton(
+                  icon: Icon(
+                    Icons.arrow_left_sharp,
+                  ),
+                  onPressed: () => Navigator.pop(context)),
             ),
             body: ListView(children: divided),
           );
