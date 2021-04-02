@@ -25,7 +25,7 @@ class RandomWords extends StatefulWidget {
 }
 
 class _RandomWordsState extends State<RandomWords> {
-  final _suggestions = <WordPair>[];
+  final _suggestions = <Suggestion>[];
   final _biggerFont = TextStyle(fontSize: 18.0);
 
   @override
@@ -45,18 +45,39 @@ class _RandomWordsState extends State<RandomWords> {
           if (i.isOdd) return Divider();
           final nonDividerIdx = i ~/ 2;
           if (nonDividerIdx >= _suggestions.length) {
-            _suggestions.addAll(generateWordPairs().take(10));
+            _suggestions.addAll(
+                generateWordPairs().take(10).map((e) => Suggestion(e, false)));
           }
           return _buildRow(_suggestions[nonDividerIdx]);
         });
   }
 
-  Widget _buildRow(WordPair pair) {
+  void _togglSuggestionSelection(Suggestion s) {
+    setState(() {
+      s.toggleSelected();
+    });
+  }
+
+  Widget _buildRow(Suggestion suggestion) {
+    final icon = suggestion.selected ? Icons.favorite : Icons.favorite_border;
     return ListTile(
       title: Text(
-        pair.asPascalCase,
+        suggestion.wp.asPascalCase,
         style: _biggerFont,
       ),
+      trailing: Icon(icon),
+      onTap: () => _togglSuggestionSelection(suggestion),
     );
+  }
+}
+
+class Suggestion {
+  bool selected = false;
+  WordPair wp;
+
+  Suggestion(this.wp, this.selected);
+
+  toggleSelected() {
+    this.selected = !this.selected;
   }
 }
