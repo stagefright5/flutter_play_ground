@@ -1,6 +1,6 @@
 # flutter_play_ground
 
-A new Flutter project.
+Repo for exploring and learning `Flutter` framework
 
 ## Getting Started
 
