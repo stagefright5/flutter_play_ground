@@ -29,7 +29,7 @@ class RandomWords extends StatefulWidget {
 
 class _RandomWordsState extends State<RandomWords> {
   final _suggestions = <Suggestion>[];
-  final _saved = <WordPair>{};
+  final _saved = <Suggestion>{};
   final _biggerFont = TextStyle(fontSize: 18.0);
 
   @override
@@ -47,39 +47,17 @@ class _RandomWordsState extends State<RandomWords> {
   }
 
   void _pushSaved() {
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        // NEW lines from here...
-        builder: (BuildContext context) {
-          final tiles = _saved.map(
-            (WordPair pair) {
-              return ListTile(
-                title: Text(
-                  pair.asPascalCase,
-                  style: _biggerFont,
-                ),
-              );
-            },
-          );
-          final divided = ListTile.divideTiles(
-            context: context,
-            tiles: tiles,
-          ).toList();
-
-          return Scaffold(
-            appBar: AppBar(
-              title: getAppBarTitleWidget('Saved Names'),
-              leading: IconButton(
-                  icon: Icon(
-                    Icons.arrow_left_sharp,
-                  ),
-                  onPressed: () => Navigator.pop(context)),
-            ),
-            body: ListView(children: divided),
-          );
-        },
-      ),
-    );
+    Navigator.of(context)
+        .push(MaterialPageRoute<bool>(
+            builder: (BuildContext context) => SavedNamesList(saved: _saved)))
+            // "then" gets executed after this pushed state gets popped by clicking `back` button from the 
+            // "SavedNamesList" widget
+        .then((shouldRebuild) {
+      if (shouldRebuild) {
+        // set state when the Navigator.pop says so (that, is sends "true") 
+        setState(() {});
+      }
+    });
   }
 
   Widget _buildSuggestions() {
@@ -100,9 +78,9 @@ class _RandomWordsState extends State<RandomWords> {
     setState(() {
       s.toggleSelected();
       if (s.selected) {
-        _saved.add(s.wp);
+        _saved.add(s);
       } else {
-        _saved.remove(s.wp);
+        _saved.remove(s);
       }
     });
   }
@@ -136,4 +114,61 @@ Text getAppBarTitleWidget(String text) {
     text,
     style: TextStyle(fontWeight: FontWeight.bold),
   );
+}
+
+class SavedNamesList extends StatefulWidget {
+  final Set<Suggestion>
+      saved; // This is being sent from the Navigator route builder -> "MaterialPageRoute"
+
+  SavedNamesList({this.saved});
+  @override
+  _SavedNamesListState createState() => _SavedNamesListState(saved: saved);
+}
+
+class _SavedNamesListState extends State<SavedNamesList> {
+  final Set<Suggestion> saved;
+
+  _SavedNamesListState({this.saved});
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: getAppBarTitleWidget('Saved Names'),
+        leading: IconButton(
+            icon: Icon(
+              Icons.arrow_left,
+            ),
+            onPressed: () => Navigator.pop(context, true)),
+      ),
+      body: ListView.builder(
+        itemCount: saved.length,
+        itemBuilder: (context, index) => _buildRow(saved.toList()[index]),
+      ),
+    );
+  }
+
+  void _togglSuggestionSelection(Suggestion s) {
+    setState(() {
+      s.toggleSelected();
+      if (s.selected) {
+        saved.add(s);
+      } else {
+        saved.remove(s);
+      }
+    });
+  }
+
+  Widget _buildRow(Suggestion suggestion) {
+    return ListTile(
+      title: Text(
+        suggestion.wp.asPascalCase,
+        // style: _biggerFont,
+      ),
+      trailing: IconButton(
+        icon: Icon(Icons.delete_outlined),
+        onPressed: () => _togglSuggestionSelection(suggestion),
+        tooltip: 'Delete ${suggestion.wp.asPascalCase} from saved list',
+      ),
+    );
+  }
 }
