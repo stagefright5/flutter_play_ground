@@ -50,11 +50,11 @@ class _RandomWordsState extends State<RandomWords> {
     Navigator.of(context)
         .push(MaterialPageRoute<bool>(
             builder: (BuildContext context) => SavedNamesList(saved: _saved)))
-            // "then" gets executed after this pushed state gets popped by clicking `back` button from the 
-            // "SavedNamesList" widget
         .then((shouldRebuild) {
+      // "then" gets executed after this pushed state gets popped by clicking `back` button from the
+      // "SavedNamesList" widget
       if (shouldRebuild) {
-        // set state when the Navigator.pop says so (that, is sends "true") 
+        // set state when the Navigator.pop says so (that, is sends "true")
         setState(() {});
       }
     });
